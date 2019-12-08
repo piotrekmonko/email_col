@@ -1,0 +1,6 @@
+{
+    "from_email": "krl.michniewicz@gmail.com",
+    "to_emails": "karol.michniewicz@autologyx.com",
+    "subject": "Normal email without attachment",
+    "html_content": "<strong>Email content</strong>"
+}
