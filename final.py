@@ -6,6 +6,7 @@ from sendgrid.helpers.mail import (
     FileType, Disposition, ContentId)
 from sendgrid.helpers.mail import Mail
 from sendgrid import SendGridAPIClient
+import time
 
 
 def get_cases():
@@ -92,6 +93,8 @@ def email(cases):
             print(response.headers)
         except Exception as e:
             print(e.message)
+
+        time.sleep(5)
 
 
 email(get_cases())
