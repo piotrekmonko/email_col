@@ -29,6 +29,8 @@ def email(cases):
         to = []
         content = []
         encoded_base = []
+        filename = []
+        mime_type = []
         files = os.listdir(item)
         for file in files:
             file_path = os.path.join(item, file)
@@ -40,6 +42,25 @@ def email(cases):
                     content.append(data['html_content'])
                     subj.append(data['subject'])
             elif file.endswith(".pdf"):
+                filename.append(file)
+                filetype = 'application/pdf'
+                mime_type.append(filetype)
+                with open(file_path, 'rb') as f:
+                    data = f.read()
+                    f.close()
+                encoded_base.append(base64.b64encode(data).decode())
+            elif file.endswith(".jpg"):
+                filename.append(file)
+                filetype = 'application/jpg'
+                mime_type.append(filetype)
+                with open(file_path, 'rb') as f:
+                    data = f.read()
+                    f.close()
+                encoded_base.append(base64.b64encode(data).decode())
+            elif file.endswith(".png"):
+                filetype = 'application/png'
+                mime_type.append(filetype)
+                filename.append(file)
                 with open(file_path, 'rb') as f:
                     data = f.read()
                     f.close()
@@ -57,8 +78,8 @@ def email(cases):
         else:
             attachment = Attachment()
             attachment.file_content = FileContent(encoded_base[0])  # The Base64 encoded content of the attachment
-            attachment.file_type = FileType('application/pdf')  # The MIME type of the content you are attaching
-            attachment.file_name = FileName('test_filename.pdf')  # The filename of the attachment
+            attachment.file_type = FileType(mime_type[0])  # The MIME type of the content you are attaching
+            attachment.file_name = FileName(filename[0])  # The filename of the attachment
             attachment.disposition = Disposition('attachment')  # Attachment or Inline (inside emails body)
             attachment.content_id = ContentId('Example Content ID')  # Only used for Disposition(inline)
             message.attachment = attachment
