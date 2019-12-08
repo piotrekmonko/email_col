@@ -45,3 +45,8 @@ try:
     print(response.headers)
 except Exception as e:
     print(e.message)
+
+# elif file.endswith(".pdf"):
+#   with open(file_path) as pdf_file:
+#      pdf_encoded = base64.b64encode(pdf_file).decode()
+#     email_attach[file] = pdf_encoded

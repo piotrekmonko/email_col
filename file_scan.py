@@ -2,6 +2,13 @@ import os
 import json
 import base64
 import collections
+from sendgrid.helpers.mail import (
+    Mail, Attachment, FileContent, FileName,
+    FileType, Disposition, ContentId)
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
+import pprint
+
 
 
 def get_cases():
@@ -20,18 +27,13 @@ def get_cases():
 
 def email_payload(cases):
 
-    # email_data = collections.defaultdict(dict)
+    email_data = []
 
     for item in cases:
         case_name = os.path.basename(item)
-
-        fin = {case_name: ""}
-
         case_data = collections.defaultdict(dict)
-
-        print(case_name)
         email_body = collections.defaultdict(dict)
-        email_attach = collections.defaultdict(dict)
+        email_attach = {}
         files = os.listdir(item)
         for file in files:
             file_path = os.path.join(item, file)
@@ -41,20 +43,48 @@ def email_payload(cases):
                     email_body[file] = data
             else:
                 email_attach[file] = file_path
-        case_data[case_name] =
+        email_body.update(email_attach)
+        case_data[case_name] = email_body
+        email_data.append(case_data)
 
-            #elif file.endswith(".pdf"):
-             #   with open(file_path) as pdf_file:
-              #      pdf_encoded = base64.b64encode(pdf_file).decode()
-               #     email_attach[file] = pdf_encoded
-
-
+    #print(email_data)
+    return email_data
 
 
-        print(email_body)
-        print(email_attach)
+def send_mail(email_data):
+
+    klucze = []
+    final = []
+
+    for item in email_data:
+        app_json2 = json.dumps(item)
+        newobj = json.loads(app_json2)
+        klucze.append(newobj)
+        #print(newobj)
+        for key in newobj:
+            jsonkey = key + '.json'
+        #    print(jsonkey)
+
+    for item in klucze:
+        print(item)
+
+
+'''
+    for item in klucze:
+       for key in item:
+           final.append(key)
+
+    for item in final:
+        
 
 
 
-email_payload(get_cases())
+    message = Mail(
+
+    )
+'''
+
+
+#email_payload(get_cases())
+send_mail(email_payload(get_cases()))
 
