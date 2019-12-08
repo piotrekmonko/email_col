@@ -1,6 +1,6 @@
 {
     "from_email": "krl.michniewicz@gmail.com",
-    "to_emails": "karol.michniewicz@autologyx.com",
+    "to_email": "karol.michniewicz@autologyx.com",
     "subject": "Normal email that has an attachment",
     "html_content": "<strong>Email content</strong>"
 }
