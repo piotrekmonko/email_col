@@ -1,12 +1,12 @@
 import os
 import json
 import base64
-from sendgrid.helpers.mail import (
-    Mail, Attachment, FileContent, FileName,
-    FileType, Disposition, ContentId)
-from sendgrid.helpers.mail import Mail
+import re
+
 from sendgrid import SendGridAPIClient
-import time
+
+
+_sendgrid_client = None
 
 
 def get_cases():
@@ -23,78 +23,87 @@ def get_cases():
     return cases
 
 
-def email(cases):
-    for item in cases:
-        subj = []
-        from_address = []
-        to = []
-        content = []
-        encoded_base = []
-        filename = []
-        mime_type = []
-        files = os.listdir(item)
-        for file in files:
-            file_path = os.path.join(item, file)
-            if file.endswith(".json"):
-                with open(file_path) as json_file:
-                    data = json.load(json_file)
-                    from_address.append(data['from_email'])
-                    to.append(data['to_email'])
-                    content.append(data['html_content'])
-                    subj.append(data['subject'])
-            elif file.endswith(".pdf"):
-                filename.append(file)
-                filetype = 'application/pdf'
-                mime_type.append(filetype)
-                with open(file_path, 'rb') as f:
-                    data = f.read()
-                    f.close()
-                encoded_base.append(base64.b64encode(data).decode())
-            elif file.endswith(".jpg"):
-                filename.append(file)
-                filetype = 'application/jpg'
-                mime_type.append(filetype)
-                with open(file_path, 'rb') as f:
-                    data = f.read()
-                    f.close()
-                encoded_base.append(base64.b64encode(data).decode())
-            elif file.endswith(".png"):
-                filetype = 'application/png'
-                mime_type.append(filetype)
-                filename.append(file)
-                with open(file_path, 'rb') as f:
-                    data = f.read()
-                    f.close()
-                encoded_base.append(base64.b64encode(data).decode())
+def get_sendgrid_client():
+    global _sendgrid_client
+    if not _sendgrid_client:
+        _sendgrid_client = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+    return _sendgrid_client
 
-        message = Mail(
-            from_email=str(from_address[0]),
-            to_emails=str(to[0]),
-            subject=str(subj[0]),
-            html_content=(content[0])
-        )
 
-        if len(encoded_base) == 0:
-            pass
+def send_message(case_message):
+    sendgrid_client = get_sendgrid_client()
+    response = sendgrid_client.send(case_message)
+    print(response.status_code)
+    print(response.body)
+    print(response.headers)
+
+
+def process_cases(cases):
+    for case in cases:
+        case_message = process_case(case)
+        send_message(case_message)
+
+
+def process_json(json_file_path):
+    with open(json_file_path) as json_file:
+        data = json.load(json_file)
+        html_content = data['html_content']
+        plain_content = re.sub('<[^<]+?>', '', html_content)
+        return {
+            'from': {
+                'email': data['from_email'],
+            },
+            'personalizations': [{
+                'to': [{
+                    'email': data['to_email']
+                }],
+                'subject': data['subject'],
+            }],
+            'content': [
+                {
+                    'type': 'text/plain',
+                    'value': plain_content,
+                },
+                {
+                    'type': 'text/html',
+                    'value': html_content,
+                },
+            ]
+        }
+
+
+def process_attachment(attachment_path):
+    with open(attachment_path, 'rb') as src:
+        file_name, extension = os.path.basename(attachment_path).rsplit('.', 1)
+        return {
+            'content': base64.b64encode(src.read()),
+            'disposition': 'attachment',
+            'filename': os.path.basename(attachment_path),
+            'name': file_name,
+            'type': extension,
+        }
+
+
+def process_case(case):
+    print('processing %s' % case)
+    files = os.listdir(case)
+    message = {}
+    attachments = []
+    # build message and attachments
+    for file_path in files:
+        file_path = os.path.join(case, file_path)
+        if file_path.endswith(".json"):
+            message.update(process_json(file_path))
         else:
-            attachment = Attachment()
-            attachment.file_content = FileContent(encoded_base[0])  # The Base64 encoded content of the attachment
-            attachment.file_type = FileType(mime_type[0])  # The MIME type of the content you are attaching
-            attachment.file_name = FileName(filename[0])  # The filename of the attachment
-            attachment.disposition = Disposition('attachment')  # Attachment or Inline (inside emails body)
-            attachment.content_id = ContentId('Example Content ID')  # Only used for Disposition(inline)
-            message.attachment = attachment
-
-        try:
-            sendgrid_client = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
-            response = sendgrid_client.send(message)
-            print(response.status_code)
-            print(response.body)
-            print(response.headers)
-        except Exception as e:
-            print(e.message)
-
-        time.sleep(10)
+            attachments.append(process_attachment(file_path))
+    print('message:', message)
+    print('attachments:', len(attachments))
+    if len(message):
+        message['attachments'] = attachments
+    return message
 
 
-email(get_cases())
+if __name__ == '__main__':
+    cases = get_cases()
+    cases.sort()
+    process_cases(get_cases())
