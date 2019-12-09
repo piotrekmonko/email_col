@@ -1,6 +1,0 @@
-{
-    "from_email": "krl.michniewicz@gmail.com",
-    "to_email": "John Smith <alxjohnsmith@gmail.com>",
-    "subject": "Normal email without attachment",
-    "html_content": "<strong>Email content</strong>"
-}

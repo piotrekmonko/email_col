@@ -1,0 +1,6 @@
+{
+    "from_email": "No match <nomatch@match.com>",
+    "to_email": "alxjohnsmith@gmail.com",
+    "subject": "TC12 Full from with a png",
+    "html_content": "Special chars !@#$%^&*()"
+}

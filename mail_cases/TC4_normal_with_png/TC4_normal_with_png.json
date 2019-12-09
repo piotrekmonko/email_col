@@ -1,0 +1,6 @@
+{
+    "from_email": "karol.michniewicz@tjsoftware.co",
+    "to_email": "alxjohnsmith@gmail.com",
+    "subject": "TC4 Normal email that has a png attachment",
+    "html_content": "Special chars !@#$%^&*()"
+}

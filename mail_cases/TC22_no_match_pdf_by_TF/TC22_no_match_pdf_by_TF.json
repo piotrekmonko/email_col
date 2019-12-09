@@ -1,0 +1,6 @@
+{
+    "from_email": "No match <nomatch@match.com>",
+    "to_email": "alxjohnsmith@gmail.com",
+    "subject": "TC22 Full from with a pdf",
+    "html_content": "Normal plain text"
+}
