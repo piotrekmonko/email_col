@@ -1,5 +1,5 @@
 {
-    "from_email": "karol.michniewicz@tjsoftware.co",
+    "from_email": "karolmichniewicz@tjsoftware.co",
     "to_email": "alxjohnsmith@gmail.com",
     "subject": "TC16 Normal email that has a png attachment",
     "html_content": "Special chars !@#$%^&*()"

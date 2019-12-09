@@ -1,5 +1,5 @@
 {
-    "from_email": "karol.michniewicz@tjsoftware.co",
+    "from_email": "karolmichniewicz@tjsoftware.co",
     "to_email": "alxjohnsmith@gmail.com",
     "subject": "TC2 Normal email with a pdf attachment",
     "html_content": "Normal plain text"

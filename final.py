@@ -94,7 +94,7 @@ def email(cases):
         except Exception as e:
             print(e.message)
 
-        time.sleep(5)
+        time.sleep(10)
 
 
 email(get_cases())
