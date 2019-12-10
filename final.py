@@ -77,7 +77,8 @@ def process_attachment(attachment_path):
         file_name, extension = os.path.basename(attachment_path).rsplit('.', 1)
         return {
             'content': base64.b64encode(src.read()),
-            'disposition': 'attachment',
+            'content_id': str(hash(attachment_path)),
+            'disposition': 'inline',
             'filename': os.path.basename(attachment_path),
             'name': file_name,
             'type': extension,
@@ -95,10 +96,12 @@ def process_case(case):
         if file_path.endswith(".json"):
             message.update(process_json(file_path))
         else:
-            attachments.append(process_attachment(file_path))
+            att = process_attachment(file_path)
+            if att:
+                attachments.append(att)
     print('message:', message)
     print('attachments:', len(attachments))
-    if len(message):
+    if len(attachments):
         message['attachments'] = attachments
     return message
 
@@ -106,4 +109,4 @@ def process_case(case):
 if __name__ == '__main__':
     cases = get_cases()
     cases.sort()
-    process_cases(get_cases())
+    process_cases(cases)
