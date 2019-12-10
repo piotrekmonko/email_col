@@ -78,7 +78,7 @@ def process_attachment(attachment_path):
         return {
             'content': base64.b64encode(src.read()),
             'content_id': str(hash(attachment_path)),
-            'disposition': 'inline',
+            'disposition': 'attachment',
             'filename': os.path.basename(attachment_path),
             'name': file_name,
             'type': extension,
