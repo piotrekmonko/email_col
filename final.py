@@ -76,7 +76,7 @@ def process_attachment(attachment_path):
     with open(attachment_path, 'rb') as src:
         file_name, extension = os.path.basename(attachment_path).rsplit('.', 1)
         return {
-            'content': base64.b64encode(src.read()),
+            'content': base64.b64encode(src.read()).decode('utf-8'),
             'content_id': str(hash(attachment_path)),
             'disposition': 'attachment',
             'filename': os.path.basename(attachment_path),
