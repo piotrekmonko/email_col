@@ -2,6 +2,8 @@ import os
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
+
+
 message = Mail(
     from_email="Karol Michniewicz <krl.michniewicz@gmail.com>",
     to_emails="Karol Michniewicz <karol.michniewicz@autologyx.com>",
