@@ -47,7 +47,6 @@ def email_payload(cases):
         case_data[case_name] = email_body
         email_data.append(case_data)
 
-    #print(email_data)
     return email_data
 
 
